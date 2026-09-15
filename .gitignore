@@ -1,0 +1,11 @@
+# Local credentials and environment files (examples may be committed).
+.env
+.env.*
+*.env
+!.env.example
+!*.env.example
+.envrc
+secrets/
+.aws/
+*.pem
+*.key

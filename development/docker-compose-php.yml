@@ -26,6 +26,9 @@ services:
       - ../provisioning/ansible/roles/powerdns/files/pdns.conf:/etc/powerdns/pdns.conf:ro
       - ../provisioning/ansible/roles/powerdns/files/pdns.d/docker.conf:/etc/powerdns/pdns.d/docker.conf:ro
       - ../webapp/img:/home/isucon/webapp/img
+    env_file:
+      - path: ../.env.local
+        required: false
     environment:
       ISUCON13_MYSQL_DIALCONFIG_ADDRESS: mysql
       ISUCON13_POWERDNS_HOST: powerdns

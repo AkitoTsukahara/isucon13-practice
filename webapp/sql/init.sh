@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eux
+set -eu
 cd $(dirname $0)
 
 if test -f /home/isucon/env.sh; then

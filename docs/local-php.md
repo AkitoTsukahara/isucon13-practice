@@ -95,3 +95,36 @@ git remote set-url --push upstream DISABLED
 件数指定なしの配信検索は10秒以内に応答しなかったため、疎通確認には `?limit=1` を利用しています。性能改善とベンチマークの完走確認は今後の練習範囲です。
 
 nginxとPowerDNSのイメージは、確認した内容を再利用できるようdigestで固定しています。Apple Siliconでの実行は未確認です。
+
+## 秘密情報をGitの外で管理する
+
+**このローカルPHP環境にはAWSキーは不要です。** PHPはローカルのMySQLとPowerDNSを利用します。既存の `isucon` / `isudns` / `root` はローカル練習用の公開済みデフォルト値で、実サービスの認証情報には使いません。
+
+将来PHPから外部サービスへ接続する場合は、リポジトリのルートに `.env.local` を用意します。
+
+```sh
+# 初回のみ（既存の設定を上書きしない）
+test -e .env.local || (umask 077; cp .env.example .env.local)
+# エディタで .env.local に必要な値を記入
+make up
+```
+
+- `.env.local` はPHPコンテナの実行時にだけ読み込まれます。ファイルがなくても起動できます。Compose 2.24以降が必要です。
+- 記入形式は `VARIABLE_NAME=value` です。`$` などを含むリテラルは `VARIABLE_NAME='value'` と単一引用符で囲んでください。
+- PHPでは `getenv('VARIABLE_NAME')` で取得できます。AWS設定を記入しても、既存PHP実装にAWS連携が追加されるわけではありません。
+- 変更後は `make up` でコンテナを再作成します。`make stop` の後に単にコンテナをstartするだけでは設定は更新されません。
+- `.env.local` / `.env` / `secrets/` / `.aws/` / 秘密鍵ファイルは `.gitignore` で除外します。Gitへ追加するのは値を空にした `.env.example` だけです。
+- `.env.local` はDockerのビルド対象ディレクトリ外です。PHPの `.dockerignore` にも環境ファイルと秘密鍵の除外を追加しています。
+- `webapp/php/app`・`src`・`public` はマウントされるため、これらのソース内や公開ディレクトリに秘密情報を書かないでください。
+- DBパスワードを変える場合は、MySQLのユーザー設定とPHPの `ISUCON13_MYSQL_DIALCONFIG_PASSWORD` を両方変更する必要があります。`.env.local` の編集だけでは既存DBのパスワードは変わりません。
+- `.env.local` は暗号化保管ではありません。Dockerにアクセスできる人はコンテナの環境変数を参照できます。`docker compose config` や環境変数のダンプを共有しないでください。
+- ホストでAWS CLIを使う場合の認証情報は `~/.aws/` などリポジトリの外で管理します。ホストのAWS認証情報をPHPへ自動マウントする設定はありません。
+
+確認コマンド（値は表示しません）:
+
+```sh
+git check-ignore .env.local
+git status --short
+```
+
+`.gitignore` はすでにコミットされた情報を履歴から削除しません。今回引き継いだ履歴は維持し、今後追加する秘密情報をGit管理外に置くための設定です。

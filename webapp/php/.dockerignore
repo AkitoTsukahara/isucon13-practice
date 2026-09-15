@@ -1,1 +1,17 @@
 vendor
+
+.env
+.env.*
+*.env
+secrets/
+.aws/
+*.pem
+*.key
+
+**/.env
+**/.env.*
+**/*.env
+**/secrets
+**/.aws
+**/*.pem
+**/*.key
