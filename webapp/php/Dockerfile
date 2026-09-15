@@ -3,12 +3,10 @@ FROM php:8.2.11-fpm-bookworm
 WORKDIR /tmp
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get install -y curl wget gcc g++ make sqlite3 locales locales-all git zip && \
-    wget -q https://dev.mysql.com/get/mysql-apt-config_0.8.35-1_all.deb && \
-    apt-get -y install ./mysql-apt-config_0.8.35-1_all.deb && \
-    apt-get -y update && \
-    apt-get -y install default-mysql-client pdns-server pdns-backend-mysql
+    apt-get install -y --no-install-recommends \
+        default-mysql-client pdns-server pdns-backend-mysql \
+        locales locales-all git unzip && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN rm -f /etc/powerdns/pdns.d/bind.conf
 

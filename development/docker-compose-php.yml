@@ -1,9 +1,6 @@
-version: '3.0'
-
 services:
   nginx:
-    image: nginx:latest
-    container_name: nginx
+    image: nginx@sha256:05b8cb60c354a44ab824ea6e7dc69b46d50762cdbe728a347a5b656e6fb3d7c4
     volumes:
       - ./php/etc/nginx/conf.d:/etc/nginx/conf.d
     ports:
@@ -19,8 +16,10 @@ services:
       context: ../webapp/php
     init: true
     working_dir: /home/isucon/webapp/php
-    container_name: webapp
     volumes:
+      - ../webapp/php/app:/home/isucon/webapp/php/app
+      - ../webapp/php/src:/home/isucon/webapp/php/src
+      - ../webapp/php/public:/home/isucon/webapp/php/public
       - ./php/usr/local/etc/php-fpm.d/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
       - ../webapp/sql:/home/isucon/webapp/sql
       - ../webapp/pdns:/home/isucon/webapp/pdns
@@ -31,7 +30,6 @@ services:
       ISUCON13_MYSQL_DIALCONFIG_ADDRESS: mysql
       ISUCON13_POWERDNS_HOST: powerdns
       ISUCON13_POWERDNS_SUBDOMAIN_ADDRESS: 127.0.0.1
-      ISUCON13_POWERDNS_DISABLED: true
     depends_on:
       mysql:
         condition: service_healthy

@@ -1,9 +1,8 @@
-version: '3.0'
+name: isucon13-practice
 
 services:
   nginx:
-    image: nginx:latest
-    container_name: nginx
+    image: nginx@sha256:05b8cb60c354a44ab824ea6e7dc69b46d50762cdbe728a347a5b656e6fb3d7c4
     volumes:
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
     ports:
@@ -12,12 +11,12 @@ services:
       - webapp
   mysql:
     image: mysql/mysql-server:8.0.31
-    container_name: mysql
     environment:
       - "MYSQL_ROOT_HOST=%"
       - "MYSQL_ROOT_PASSWORD=root"
     volumes:
-      - ../webapp/sql/initdb.d:/docker-entrypoint-initdb.d
+      - ../webapp/sql/initdb.d/00_create_database.sql:/docker-entrypoint-initdb.d/00_create_database.sql:ro
+      - ../webapp/sql/initdb.d/10_schema.sql:/docker-entrypoint-initdb.d/10_schema.sql:ro
       - ./pdns/20_powerdns_schema.sql:/docker-entrypoint-initdb.d/20_powerdns_schema.sql
       - mysql_volume:/var/lib/mysql
     ports:
@@ -31,8 +30,7 @@ services:
       start_period: 10s
 
   powerdns:
-    image: powerdns/pdns-auth-master
-    container_name: powerdns
+    image: powerdns/pdns-auth-master@sha256:4124b76220512e363bfb2bde40254b77a69e0f9307f7c845a55afbf090f2cc0a
     environment:
       - "PDNS_AUTH_API_KEY=isudns"
     ports:
