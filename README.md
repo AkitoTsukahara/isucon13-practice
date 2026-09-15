@@ -2,6 +2,8 @@
 
 OrbStackでのPHP起動手順は [ローカルPHP環境のセットアップ](docs/local-php.md) を参照してください。
 
+練習は [2週間ロードマップ](docs/practice-roadmap.md)（1週目ローカル・2週目AWS）に沿って進められます。[記事・参考資料集](docs/practice-resources.md) と [練習記録テンプレート](docs/practice-log-template.md) も用意しています。
+
 # ISUCON13 問題
 
 ## 当日に公開したマニュアルおよびアプリケーションについての説明
